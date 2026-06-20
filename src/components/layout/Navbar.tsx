@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import {
   Home,
@@ -30,15 +30,25 @@ export function Navbar() {
   const [isOpen, setIsOpen] = useState(false);
   const location = useLocation();
 
+  useEffect(() => {
+    setIsOpen(false);
+  }, [location.pathname]);
+
   return (
     <nav className="fixed top-0 left-0 right-0 z-50 bg-white/80 backdrop-blur-lg border-b border-slate-200">
+      <a
+        href="#main"
+        className="sr-only focus:not-sr-only focus:absolute focus:top-2 focus:left-2 focus:z-50 focus:px-4 focus:py-2 focus:bg-blue-600 focus:text-white focus:rounded-lg"
+      >
+        Skip to content
+      </a>
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-16">
           <Link to="/" className="flex items-center gap-2">
-            <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-blue-600 to-indigo-600 flex items-center justify-center shadow-lg shadow-blue-500/20">
+            <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-blue-600 to-sky-500 flex items-center justify-center shadow-lg shadow-blue-500/20">
               <Shield className="w-5 h-5 text-white" />
             </div>
-            <span className="font-bold text-xl bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent">
+            <span className="font-bold text-xl bg-gradient-to-r from-blue-600 to-sky-500 bg-clip-text text-transparent">
               JanSeva
             </span>
           </Link>
@@ -67,12 +77,18 @@ export function Navbar() {
           </div>
 
           <div className="hidden lg:flex items-center gap-3">
-            <button className="px-4 py-2 text-sm font-medium text-slate-600 hover:text-slate-900 transition-colors">
+            <Link
+              to="/dashboard"
+              className="px-4 py-2 text-sm font-medium text-slate-600 hover:text-blue-700 hover:bg-blue-50 rounded-lg transition-colors"
+            >
               Sign In
-            </button>
-            <button className="px-4 py-2 text-sm font-medium text-white bg-gradient-to-r from-blue-600 to-indigo-600 rounded-lg shadow-md shadow-blue-500/20 hover:shadow-lg hover:shadow-blue-500/30 transition-all">
+            </Link>
+            <Link
+              to="/dashboard"
+              className="px-4 py-2 text-sm font-medium text-white bg-gradient-to-r from-blue-600 to-sky-500 rounded-lg shadow-md shadow-blue-500/20 hover:shadow-lg hover:shadow-blue-500/30 transition-all"
+            >
               Get Started
-            </button>
+            </Link>
           </div>
 
           {/* Mobile menu button */}
@@ -110,12 +126,18 @@ export function Navbar() {
               );
             })}
             <div className="pt-3 border-t border-slate-200 flex gap-2">
-              <button className="flex-1 px-4 py-2 text-sm font-medium text-slate-600 hover:bg-slate-50 rounded-lg">
+              <Link
+                to="/dashboard"
+                className="flex-1 px-4 py-2 text-sm font-medium text-slate-600 hover:bg-slate-50 rounded-lg text-center"
+              >
                 Sign In
-              </button>
-              <button className="flex-1 px-4 py-2 text-sm font-medium text-white bg-gradient-to-r from-blue-600 to-indigo-600 rounded-lg">
+              </Link>
+              <Link
+                to="/dashboard"
+                className="flex-1 px-4 py-2 text-sm font-medium text-white bg-gradient-to-r from-blue-600 to-sky-500 rounded-lg text-center"
+              >
                 Get Started
-              </button>
+              </Link>
             </div>
           </div>
         </div>

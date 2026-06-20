@@ -1,131 +1,301 @@
+import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import {
   Shield,
-  Zap,
-  Eye,
-  Clock,
+  Bot,
+  ArrowRight,
+  FileText,
+  Search,
   MessageSquare,
   BarChart3,
-  Users,
-  Award,
-  ArrowRight,
+  Send,
+  Sparkles,
   CheckCircle2,
-  FileSearch,
-  Bot,
-  Globe,
+  Clock,
+  Users,
   Lock,
+  Loader2,
+  Star,
 } from 'lucide-react';
+import { cn } from '@/lib/utils';
 
-const features = [
+const services = [
   {
-    icon: Bot,
-    title: 'AI-Powered Analysis',
-    description: 'Smart categorization and priority assessment using advanced AI to route complaints efficiently.',
+    icon: FileText,
+    title: 'File a Complaint',
+    description:
+      'Submit grievances with smart AI categorization and automatic department routing.',
+    href: '/file-complaint',
   },
   {
-    icon: FileSearch,
-    title: 'Real-Time Tracking',
-    description: 'Track your complaints through every stage with live updates and estimated resolution times.',
+    icon: Search,
+    title: 'Track Complaints',
+    description:
+      'Monitor real-time status across every stage from submission to resolution.',
+    href: '/track',
   },
   {
     icon: MessageSquare,
     title: 'AI Assistant',
-    description: '24/7 AI chatbot to help citizens file complaints and find relevant government schemes.',
+    description:
+      'A 24/7 chatbot that guides you through services, schemes, and documentation.',
+    href: '/assistant',
   },
   {
-    icon: Eye,
-    title: 'Complete Transparency',
-    description: 'Full visibility into complaint handling with public dashboards and performance metrics.',
-  },
-  {
-    icon: Clock,
-    title: 'Faster Resolution',
-    description: 'Reduced average resolution time through intelligent routing and automated follow-ups.',
-  },
-  {
-    icon: Lock,
-    title: 'Secure & Private',
-    description: 'End-to-end encryption and secure data handling with citizen privacy protection.',
+    icon: BarChart3,
+    title: 'Public Analytics',
+    description:
+      'Transparent dashboards showing resolution performance and department metrics.',
+    href: '/analytics',
   },
 ];
 
-const stats = [
-  { value: '50,000+', label: 'Complaints Resolved' },
-  { value: '98.5%', label: 'Citizen Satisfaction' },
-  { value: '45%', label: 'Faster Resolution' },
-  { value: '24/7', label: 'AI Support Available' },
+const trustBadges = [
+  { icon: Lock, label: 'Secure & Encrypted' },
+  { icon: Clock, label: '24/7 Available' },
+  { icon: Users, label: '50,000+ Citizens' },
+  { icon: CheckCircle2, label: 'Govt Verified' },
 ];
+
+const steps = [
+  {
+    number: '01',
+    title: 'Submit Your Complaint',
+    description:
+      'Describe your issue in plain language. No need to know which department handles it.',
+    icon: FileText,
+  },
+  {
+    number: '02',
+    title: 'AI Routes & Prioritizes',
+    description:
+      'The assistant categorizes, sets priority, and assigns it to the right department instantly.',
+    icon: Bot,
+  },
+  {
+    number: '03',
+    title: 'Track to Resolution',
+    description:
+      'Follow live status updates and get notified when your issue is resolved.',
+    icon: Search,
+  },
+];
+
+const samplePrompts = [
+  'How do I file a complaint?',
+  'Track my complaint CVC2024001',
+  'What schemes am I eligible for?',
+  'Documents for a birth certificate?',
+];
+
+const mockReplies: Record<string, string> = {
+  'How do I file a complaint?':
+    'To file a complaint: go to "File Complaint" from the navigation, fill in the title and description, select a category, add your location and contact number, then submit. AI auto-categorizes and routes it to the right department.',
+  'Track my complaint CVC2024001':
+    'Complaint CVC2024001 — "Broken Street Lights in Sector 15" — is currently under review by the Electricity Department. Officer Rajesh Kumar is on the case.',
+  'What schemes am I eligible for?':
+    'Based on common eligibility, you may qualify for: National Scholarship Portal, PM-KISAN Samman Nidhi, Ayushman Bharat, and Pradhan Mantri Awas Yojana. Visit the Schemes page for full details.',
+  'Documents for a birth certificate?':
+    'For a birth certificate you typically need: hospital discharge summary, parents\' Aadhaar, proof of address, and an affidavit if filed after 21 days. Processing takes 7-15 days.',
+};
+
+interface ChatMessage {
+  id: number;
+  role: 'user' | 'bot';
+  text: string;
+}
 
 export function LandingPage() {
+  const [messages, setMessages] = useState<ChatMessage[]>([
+    {
+      id: 0,
+      role: 'bot',
+      text: 'Hello! I\'m JanSeva Assistant. I can help you file complaints, track status, find government schemes, and answer service questions. Try a prompt below.',
+    },
+  ]);
+  const [input, setInput] = useState('');
+  const [isTyping, setIsTyping] = useState(false);
+
+  const sendPrompt = (prompt: string) => {
+    if (!prompt.trim() || isTyping) return;
+    const userMsg: ChatMessage = { id: Date.now(), role: 'user', text: prompt };
+    setMessages((prev) => [...prev, userMsg]);
+    setInput('');
+    setIsTyping(true);
+
+    setTimeout(() => {
+      const reply =
+        mockReplies[prompt] ??
+        'I can help with filing complaints, tracking, schemes, and document requirements. Could you provide a bit more detail about what you need?';
+      setMessages((prev) => [
+        ...prev,
+        { id: Date.now() + 1, role: 'bot', text: reply },
+      ]);
+      setIsTyping(false);
+    }, 900);
+  };
+
   return (
     <div className="overflow-hidden">
-      {/* Hero Section */}
-      <section className="relative pt-24 pb-20 lg:pt-32 lg:pb-28">
-        <div className="absolute inset-0 bg-gradient-to-br from-blue-50 via-indigo-50/50 to-white" />
-        <div className="absolute top-0 right-0 -translate-y-1/4 translate-x-1/4 w-[600px] h-[600px] bg-blue-500/10 rounded-full blur-3xl" />
-        <div className="absolute bottom-0 left-0 translate-y-1/4 -translate-x-1/4 w-[400px] h-[400px] bg-indigo-500/10 rounded-full blur-3xl" />
+      {/* Hero */}
+      <section className="relative pt-28 pb-20 lg:pt-36 lg:pb-28">
+        <div className="absolute inset-0 bg-gradient-to-br from-blue-50 via-white to-sky-50" />
+        <div className="absolute top-20 right-0 w-[500px] h-[500px] bg-blue-200/30 rounded-full blur-3xl" />
+        <div className="absolute bottom-0 left-0 w-[400px] h-[400px] bg-sky-200/30 rounded-full blur-3xl" />
 
         <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center max-w-4xl mx-auto">
-            <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-blue-100 text-blue-700 text-sm font-medium mb-6">
-              <Zap className="w-4 h-4" />
-              <span>Powered by Advanced AI</span>
-            </div>
-
-            <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold text-slate-900 leading-tight mb-6">
-              One Platform. Smarter Governance.{' '}
-              <span className="bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent">
-                Better Citizen Experience.
-              </span>
-            </h1>
-
-            <p className="text-lg sm:text-xl text-slate-600 max-w-2xl mx-auto mb-10">
-              An AI-powered unified citizen services platform that simplifies grievance management,
-              improves transparency, and enables faster government response through intelligent automation.
-            </p>
-
-            <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              <Link
-                to="/dashboard"
-                className="inline-flex items-center justify-center gap-2 px-8 py-4 rounded-xl bg-gradient-to-r from-blue-600 to-indigo-600 text-white font-semibold shadow-lg shadow-blue-500/25 hover:shadow-xl hover:shadow-blue-500/30 transition-all"
-              >
-                Get Started
-                <ArrowRight className="w-5 h-5" />
-              </Link>
-              <Link
-                to="/analytics"
-                className="inline-flex items-center justify-center gap-2 px-8 py-4 rounded-xl bg-white text-slate-900 font-semibold border border-slate-200 shadow-sm hover:bg-slate-50 hover:border-slate-300 transition-all"
-              >
-                <BarChart3 className="w-5 h-5" />
-                View Analytics
-              </Link>
-            </div>
-          </div>
-
-          {/* Hero Image/Dashboard Preview */}
-          <div className="mt-16 relative">
-            <div className="absolute inset-0 bg-gradient-to-t from-white via-transparent to-transparent z-10" />
-            <div className="rounded-2xl bg-white/80 backdrop-blur-sm border border-slate-200 shadow-2xl overflow-hidden">
-              <div className="bg-slate-100 px-4 py-3 flex items-center gap-2 border-b border-slate-200">
-                <div className="flex gap-1.5">
-                  <div className="w-3 h-3 rounded-full bg-red-400" />
-                  <div className="w-3 h-3 rounded-full bg-yellow-400" />
-                  <div className="w-3 h-3 rounded-full bg-green-400" />
-                </div>
+          <div className="grid lg:grid-cols-2 gap-12 lg:gap-16 items-center">
+            <div className="text-center lg:text-left">
+              <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-blue-100 text-blue-700 text-sm font-medium mb-6">
+                <Sparkles className="w-4 h-4" />
+                <span>AI-Powered Citizen Services</span>
               </div>
-              <div className="p-4 sm:p-8 bg-gradient-to-br from-slate-50 to-blue-50">
-                <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
-                  {[
-                    { label: 'Total Complaints', value: '1,324', color: 'blue' },
-                    { label: 'Active', value: '168', color: 'amber' },
-                    { label: 'Resolved', value: '1,156', color: 'green' },
-                    { label: 'Pending', value: '23', color: 'red' },
-                  ].map((stat, i) => (
-                    <div key={i} className="bg-white rounded-xl p-4 shadow-sm border border-slate-100">
-                      <p className="text-2xl font-bold text-slate-900">{stat.value}</p>
-                      <p className="text-sm text-slate-500">{stat.label}</p>
+
+              <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold text-slate-900 leading-[1.1] mb-6 tracking-tight">
+                Smarter Governance.{' '}
+                <span className="bg-gradient-to-r from-blue-600 to-sky-500 bg-clip-text text-transparent">
+                  Better Citizen Experience.
+                </span>
+              </h1>
+
+              <p className="text-lg text-slate-600 max-w-xl mx-auto lg:mx-0 mb-8 leading-relaxed">
+                One unified platform to file, track, and resolve grievances. AI
+                categorizes and routes complaints to the right department —
+                fast, transparent, and accessible to every citizen.
+              </p>
+
+              <div className="flex flex-col sm:flex-row gap-4 justify-center lg:justify-start">
+                <Link
+                  to="/dashboard"
+                  className="inline-flex items-center justify-center gap-2 px-7 py-3.5 rounded-xl bg-blue-600 text-white font-semibold shadow-lg shadow-blue-600/25 hover:bg-blue-700 hover:shadow-xl hover:shadow-blue-600/30 transition-all"
+                >
+                  Get Started
+                  <ArrowRight className="w-5 h-5" />
+                </Link>
+                <Link
+                  to="/assistant"
+                  className="inline-flex items-center justify-center gap-2 px-7 py-3.5 rounded-xl bg-white text-slate-900 font-semibold border border-slate-200 shadow-sm hover:bg-slate-50 hover:border-slate-300 transition-all"
+                >
+                  <Bot className="w-5 h-5 text-blue-600" />
+                  Try the Assistant
+                </Link>
+              </div>
+
+              <div className="mt-10 grid grid-cols-2 sm:grid-cols-4 gap-4">
+                {trustBadges.map((badge) => (
+                  <div key={badge.label} className="flex items-center gap-2">
+                    <div className="w-8 h-8 rounded-lg bg-blue-100 flex items-center justify-center flex-shrink-0">
+                      <badge.icon className="w-4 h-4 text-blue-600" />
+                    </div>
+                    <span className="text-xs font-medium text-slate-700">
+                      {badge.label}
+                    </span>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            {/* Chatbot Preview */}
+            <div className="relative">
+              <div className="absolute inset-0 bg-blue-400/10 rounded-3xl blur-2xl" />
+              <div className="relative bg-white rounded-3xl border border-slate-200 shadow-2xl shadow-blue-600/10 overflow-hidden">
+                <div className="flex items-center justify-between px-5 py-4 border-b border-slate-100 bg-gradient-to-r from-blue-50 to-sky-50">
+                  <div className="flex items-center gap-3">
+                    <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-blue-600 to-sky-500 flex items-center justify-center shadow-md shadow-blue-600/30">
+                      <Bot className="w-5 h-5 text-white" />
+                    </div>
+                    <div>
+                      <p className="font-semibold text-slate-900 text-sm">
+                        JanSeva Assistant
+                      </p>
+                      <p className="text-xs text-slate-500 flex items-center gap-1">
+                        <span className="w-1.5 h-1.5 bg-green-500 rounded-full animate-pulse" />
+                        Online • Ready to help
+                      </p>
+                    </div>
+                  </div>
+                  <Sparkles className="w-4 h-4 text-blue-500" />
+                </div>
+
+                <div className="h-[340px] overflow-y-auto p-5 space-y-4 bg-slate-50/50">
+                  {messages.map((msg) => (
+                    <div
+                      key={msg.id}
+                      className={cn(
+                        'flex gap-2.5 animate-fade-in',
+                        msg.role === 'user' ? 'justify-end' : 'justify-start'
+                      )}
+                    >
+                      {msg.role === 'bot' && (
+                        <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-blue-600 to-sky-500 flex items-center justify-center flex-shrink-0">
+                          <Bot className="w-4 h-4 text-white" />
+                        </div>
+                      )}
+                      <div
+                        className={cn(
+                          'max-w-[78%] rounded-2xl px-4 py-2.5 text-sm leading-relaxed',
+                          msg.role === 'user'
+                            ? 'bg-blue-600 text-white rounded-br-md'
+                            : 'bg-white border border-slate-200 text-slate-700 rounded-bl-md shadow-sm'
+                        )}
+                      >
+                        {msg.text}
+                      </div>
                     </div>
                   ))}
+
+                  {isTyping && (
+                    <div className="flex gap-2.5 animate-fade-in">
+                      <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-blue-600 to-sky-500 flex items-center justify-center flex-shrink-0">
+                        <Bot className="w-4 h-4 text-white" />
+                      </div>
+                      <div className="bg-white border border-slate-200 rounded-2xl rounded-bl-md px-4 py-3 shadow-sm">
+                        <div className="flex items-center gap-1.5">
+                          <span className="w-1.5 h-1.5 bg-slate-400 rounded-full animate-bounce" style={{ animationDelay: '0ms' }} />
+                          <span className="w-1.5 h-1.5 bg-slate-400 rounded-full animate-bounce" style={{ animationDelay: '150ms' }} />
+                          <span className="w-1.5 h-1.5 bg-slate-400 rounded-full animate-bounce" style={{ animationDelay: '300ms' }} />
+                        </div>
+                      </div>
+                    </div>
+                  )}
+                </div>
+
+                <div className="px-4 py-3 border-t border-slate-100 bg-white">
+                  <div className="flex flex-wrap gap-1.5 mb-3">
+                    {samplePrompts.map((prompt) => (
+                      <button
+                        key={prompt}
+                        onClick={() => sendPrompt(prompt)}
+                        disabled={isTyping}
+                        className="text-xs px-3 py-1.5 rounded-full bg-blue-50 text-blue-700 hover:bg-blue-100 disabled:opacity-50 transition-colors border border-blue-100"
+                      >
+                        {prompt}
+                      </button>
+                    ))}
+                  </div>
+                  <div className="flex gap-2">
+                    <input
+                      value={input}
+                      onChange={(e) => setInput(e.target.value)}
+                      onKeyDown={(e) => {
+                        if (e.key === 'Enter') sendPrompt(input);
+                      }}
+                      placeholder="Ask me anything..."
+                      className="flex-1 px-4 py-2.5 rounded-xl border border-slate-200 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
+                    />
+                    <button
+                      onClick={() => sendPrompt(input)}
+                      disabled={!input.trim() || isTyping}
+                      aria-label="Send message"
+                      className="w-11 h-11 rounded-xl bg-blue-600 text-white flex items-center justify-center hover:bg-blue-700 disabled:opacity-50 transition-colors flex-shrink-0"
+                    >
+                      {isTyping ? (
+                        <Loader2 className="w-5 h-5 animate-spin" />
+                      ) : (
+                        <Send className="w-5 h-5" />
+                      )}
+                    </button>
+                  </div>
                 </div>
               </div>
             </div>
@@ -133,57 +303,68 @@ export function LandingPage() {
         </div>
       </section>
 
-      {/* Stats Section */}
-      <section className="py-16 bg-white border-y border-slate-100">
+      {/* Stats Bar */}
+      <section className="py-12 bg-white border-y border-slate-100">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid grid-cols-2 lg:grid-cols-4 gap-8">
-            {stats.map((stat, index) => (
-              <div key={index} className="text-center">
-                <p className="text-3xl sm:text-4xl font-bold bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent">
+            {[
+              { value: '50,000+', label: 'Complaints Resolved' },
+              { value: '98.5%', label: 'Citizen Satisfaction' },
+              { value: '45%', label: 'Faster Resolution' },
+              { value: '24/7', label: 'AI Support Available' },
+            ].map((stat) => (
+              <div key={stat.label} className="text-center">
+                <p className="text-3xl sm:text-4xl font-bold bg-gradient-to-r from-blue-600 to-sky-500 bg-clip-text text-transparent">
                   {stat.value}
                 </p>
-                <p className="text-slate-600 mt-1">{stat.label}</p>
+                <p className="text-slate-600 mt-1 text-sm">{stat.label}</p>
               </div>
             ))}
           </div>
         </div>
       </section>
 
-      {/* Features Section */}
-      <section className="py-20 bg-white">
+      {/* Services */}
+      <section className="py-20 bg-slate-50/50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center max-w-3xl mx-auto mb-16">
+          <div className="text-center max-w-3xl mx-auto mb-14">
             <h2 className="text-3xl sm:text-4xl font-bold text-slate-900 mb-4">
-              Everything You Need for Better Governance
+              One Platform, Every Service
             </h2>
             <p className="text-lg text-slate-600">
-              JanSeva brings cutting-edge AI technology to citizen services, making government more
-              responsive, transparent, and efficient.
+              Everything you need to engage with government services, in one
+              clean, intuitive interface.
             </p>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {features.map((feature, index) => {
-              const Icon = feature.icon;
-              return (
-                <div
-                  key={index}
-                  className="group p-6 rounded-2xl bg-gradient-to-br from-slate-50 to-white border border-slate-100 hover:border-blue-200 hover:shadow-lg hover:shadow-blue-500/5 transition-all duration-300"
-                >
-                  <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-blue-500 to-indigo-600 flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
-                    <Icon className="w-6 h-6 text-white" />
-                  </div>
-                  <h3 className="text-lg font-semibold text-slate-900 mb-2">{feature.title}</h3>
-                  <p className="text-slate-600">{feature.description}</p>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+            {services.map((service) => (
+              <Link
+                key={service.title}
+                to={service.href}
+                className="group bg-white rounded-2xl border border-slate-200 p-6 hover:border-blue-300 hover:shadow-xl hover:shadow-blue-600/5 transition-all duration-300"
+              >
+                <div className="w-12 h-12 rounded-xl bg-blue-100 flex items-center justify-center mb-5 group-hover:bg-blue-600 transition-colors">
+                  <service.icon className="w-6 h-6 text-blue-600 group-hover:text-white transition-colors" />
                 </div>
-              );
-            })}
+                <h3 className="text-lg font-semibold text-slate-900 mb-2">
+                  {service.title}
+                </h3>
+                <p className="text-sm text-slate-600 leading-relaxed mb-4">
+                  {service.description}
+                </p>
+                <span className="inline-flex items-center gap-1 text-sm font-medium text-blue-600 group-hover:gap-2 transition-all">
+                  Open
+                  <ArrowRight className="w-4 h-4" />
+                </span>
+              </Link>
+            ))}
           </div>
         </div>
       </section>
 
       {/* How It Works */}
-      <section className="py-20 bg-gradient-to-br from-blue-50 to-indigo-50">
+      <section className="py-20 bg-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center max-w-3xl mx-auto mb-16">
             <h2 className="text-3xl sm:text-4xl font-bold text-slate-900 mb-4">
@@ -194,93 +375,86 @@ export function LandingPage() {
             </p>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            {[
-              {
-                step: '01',
-                title: 'File Your Complaint',
-                description: 'Describe your issue and let AI auto-categorize and prioritize it instantly.',
-                icon: FileSearch,
-              },
-              {
-                step: '02',
-                title: 'AI Routes to Department',
-                description: 'Smart automation assigns your complaint to the right department and officer.',
-                icon: Bot,
-              },
-              {
-                step: '03',
-                title: 'Track & Get Updates',
-                description: 'Monitor progress in real-time with estimated resolution times and alerts.',
-                icon: Eye,
-              },
-            ].map((step, index) => {
-              const Icon = step.icon;
-              return (
-                <div key={index} className="relative">
-                  <div className="text-8xl font-bold text-blue-100 absolute -top-8 -left-4">
-                    {step.step}
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8 relative">
+            <div className="hidden md:block absolute top-12 left-[16%] right-[16%] h-0.5 bg-gradient-to-r from-blue-200 via-blue-300 to-blue-200" />
+            {steps.map((step) => (
+              <div key={step.number} className="relative text-center">
+                <div className="relative inline-flex items-center justify-center w-24 h-24 mb-6">
+                  <div className="absolute inset-0 bg-blue-100 rounded-2xl" />
+                  <div className="absolute text-5xl font-bold text-blue-200 -z-0">
+                    {step.number}
                   </div>
-                  <div className="relative bg-white rounded-2xl p-6 shadow-lg border border-slate-100">
-                    <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-blue-500 to-indigo-600 flex items-center justify-center mb-4">
-                      <Icon className="w-6 h-6 text-white" />
-                    </div>
-                    <h3 className="text-lg font-semibold text-slate-900 mb-2">{step.title}</h3>
-                    <p className="text-slate-600">{step.description}</p>
+                  <div className="relative w-14 h-14 rounded-xl bg-gradient-to-br from-blue-600 to-sky-500 flex items-center justify-center shadow-lg shadow-blue-600/30">
+                    <step.icon className="w-7 h-7 text-white" />
                   </div>
                 </div>
-              );
-            })}
+                <h3 className="text-lg font-semibold text-slate-900 mb-2">
+                  {step.title}
+                </h3>
+                <p className="text-slate-600 max-w-xs mx-auto leading-relaxed">
+                  {step.description}
+                </p>
+              </div>
+            ))}
           </div>
         </div>
       </section>
 
-      {/* Testimonials/Trust Section */}
-      <section className="py-20 bg-white">
+      {/* Testimonials */}
+      <section className="py-20 bg-slate-50/50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center max-w-3xl mx-auto mb-16">
             <h2 className="text-3xl sm:text-4xl font-bold text-slate-900 mb-4">
               Trusted by Citizens & Government
             </h2>
             <p className="text-lg text-slate-600">
-              Join thousands of citizens who have resolved their grievances through JanSeva
+              Join thousands who have resolved their grievances through JanSeva
             </p>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             {[
               {
-                quote: "My pothole complaint was resolved in just 3 days. The real-time tracking kept me informed throughout.",
-                author: "Amit Sharma",
-                role: "Citizen, Delhi",
+                quote:
+                  'My pothole complaint was resolved in 3 days. Real-time tracking kept me informed the whole way.',
+                author: 'Amit Sharma',
+                role: 'Citizen, Delhi',
               },
               {
-                quote: "The AI assistant helped me discover 3 government schemes I was eligible for. Highly recommended!",
-                author: "Priya Verma",
-                role: "Student, Mumbai",
+                quote:
+                  'The AI assistant helped me discover 3 government schemes I was eligible for. Highly recommended!',
+                author: 'Priya Verma',
+                role: 'Student, Mumbai',
               },
               {
-                quote: "As a government officer, this platform has made complaint management so much more efficient.",
-                author: "Rajesh Kumar",
-                role: "Municipal Officer",
+                quote:
+                  'As an officer, this platform has made complaint management so much more efficient.',
+                author: 'Rajesh Kumar',
+                role: 'Municipal Officer',
               },
-            ].map((testimonial, index) => (
-              <div key={index} className="bg-slate-50 rounded-2xl p-6 border border-slate-100">
+            ].map((t) => (
+              <div
+                key={t.author}
+                className="bg-white rounded-2xl border border-slate-200 p-6 shadow-sm"
+              >
                 <div className="flex gap-1 mb-4">
                   {[...Array(5)].map((_, i) => (
-                    <svg key={i} className="w-5 h-5 text-yellow-400 fill-current" viewBox="0 0 20 20">
-                      <path d="M10 15l-5.878 3.09 1.123-6.545L.489 6.91l6.572-.955L10 0l2.939 5.955 6.572.955-4.756 4.635 1.123 6.545z" />
-                    </svg>
+                    <Star
+                      key={i}
+                      className="w-4 h-4 text-amber-400 fill-amber-400"
+                    />
                   ))}
                 </div>
-                <p className="text-slate-600 mb-4">"{testimonial.quote}"</p>
+                <p className="text-slate-700 mb-6 leading-relaxed">
+                  &ldquo;{t.quote}&rdquo;
+                </p>
                 <div className="flex items-center gap-3">
-                  <div className="w-10 h-10 rounded-full bg-gradient-to-br from-blue-500 to-indigo-500 flex items-center justify-center text-white font-medium">
-                    {testimonial.author[0]}
+                  <div className="w-10 h-10 rounded-full bg-gradient-to-br from-blue-500 to-sky-400 flex items-center justify-center text-white font-medium">
+                    {t.author[0]}
                   </div>
                   <div>
-                    <p className="font-medium text-slate-900">{testimonial.author}</p>
-                    <p className="text-sm text-slate-500">{testimonial.role}</p>
+                    <p className="font-medium text-slate-900">{t.author}</p>
+                    <p className="text-sm text-slate-500">{t.role}</p>
                   </div>
                 </div>
               </div>
@@ -289,14 +463,16 @@ export function LandingPage() {
         </div>
       </section>
 
-      {/* CTA Section */}
-      <section className="py-20 bg-gradient-to-r from-blue-600 to-indigo-700">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+      {/* CTA */}
+      <section className="py-20 bg-gradient-to-br from-blue-600 to-sky-600">
+        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+          <Shield className="w-12 h-12 text-white/90 mx-auto mb-4" />
           <h2 className="text-3xl sm:text-4xl font-bold text-white mb-4">
             Ready to Experience Better Governance?
           </h2>
-          <p className="text-xl text-blue-100 mb-8 max-w-2xl mx-auto">
-            Join thousands of citizens who are already benefiting from JanSeva's intelligent platform.
+          <p className="text-lg text-blue-50 mb-8 max-w-2xl mx-auto">
+            Join thousands of citizens already benefiting from JanSeva's
+            intelligent platform.
           </p>
           <Link
             to="/dashboard"

@@ -14,33 +14,34 @@ import {
 export function Footer() {
   return (
     <footer className="bg-slate-900 text-white">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-14">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-10">
           {/* Brand */}
           <div className="space-y-4">
             <Link to="/" className="flex items-center gap-2">
-              <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-blue-500 to-indigo-500 flex items-center justify-center">
+              <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-blue-500 to-sky-400 flex items-center justify-center">
                 <Shield className="w-5 h-5 text-white" />
               </div>
               <span className="font-bold text-xl">JanSeva</span>
             </Link>
-            <p className="text-slate-400 text-sm">
-              Empowering citizens with AI-driven governance solutions for a transparent and efficient democracy.
+            <p className="text-slate-400 text-sm leading-relaxed">
+              Empowering citizens with AI-driven governance solutions for a
+              transparent and efficient democracy.
             </p>
             <div className="flex gap-3">
-              <a href="#" className="w-8 h-8 rounded-lg bg-slate-800 flex items-center justify-center text-slate-400 hover:text-white hover:bg-slate-700 transition-colors">
+              <a href="#" aria-label="Facebook" className="w-9 h-9 rounded-lg bg-slate-800 flex items-center justify-center text-slate-400 hover:text-white hover:bg-blue-600 transition-colors">
                 <Facebook className="w-4 h-4" />
               </a>
-              <a href="#" className="w-8 h-8 rounded-lg bg-slate-800 flex items-center justify-center text-slate-400 hover:text-white hover:bg-slate-700 transition-colors">
+              <a href="#" aria-label="Twitter" className="w-9 h-9 rounded-lg bg-slate-800 flex items-center justify-center text-slate-400 hover:text-white hover:bg-blue-600 transition-colors">
                 <Twitter className="w-4 h-4" />
               </a>
-              <a href="#" className="w-8 h-8 rounded-lg bg-slate-800 flex items-center justify-center text-slate-400 hover:text-white hover:bg-slate-700 transition-colors">
+              <a href="#" aria-label="Instagram" className="w-9 h-9 rounded-lg bg-slate-800 flex items-center justify-center text-slate-400 hover:text-white hover:bg-blue-600 transition-colors">
                 <Instagram className="w-4 h-4" />
               </a>
-              <a href="#" className="w-8 h-8 rounded-lg bg-slate-800 flex items-center justify-center text-slate-400 hover:text-white hover:bg-slate-700 transition-colors">
+              <a href="#" aria-label="LinkedIn" className="w-9 h-9 rounded-lg bg-slate-800 flex items-center justify-center text-slate-400 hover:text-white hover:bg-blue-600 transition-colors">
                 <Linkedin className="w-4 h-4" />
               </a>
-              <a href="#" className="w-8 h-8 rounded-lg bg-slate-800 flex items-center justify-center text-slate-400 hover:text-white hover:bg-slate-700 transition-colors">
+              <a href="#" aria-label="YouTube" className="w-9 h-9 rounded-lg bg-slate-800 flex items-center justify-center text-slate-400 hover:text-white hover:bg-blue-600 transition-colors">
                 <Youtube className="w-4 h-4" />
               </a>
             </div>
@@ -86,7 +87,7 @@ export function Footer() {
               </div>
               <div className="flex items-center gap-2 text-slate-400 text-sm">
                 <Phone className="w-4 h-4" />
-                <span>1800-XXX-XXXX</span>
+                <span>1800-200-0001</span>
               </div>
               <div className="flex items-center gap-2 text-slate-400 text-sm">
                 <MapPin className="w-4 h-4" />
@@ -96,9 +97,13 @@ export function Footer() {
           </div>
         </div>
 
-        <div className="mt-12 pt-8 border-t border-slate-800 text-center">
+        <div className="mt-12 pt-8 border-t border-slate-800 flex flex-col sm:flex-row items-center justify-between gap-4">
           <p className="text-slate-400 text-sm">
             © 2024 JanSeva. All rights reserved. Made with care for the citizens of India.
+          </p>
+          <p className="text-xs text-slate-500 flex items-center gap-1.5">
+            <Shield className="w-3.5 h-3.5" />
+            Government of India • Verified & Secure
           </p>
         </div>
       </div>

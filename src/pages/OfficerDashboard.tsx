@@ -1,7 +1,5 @@
 import { Link } from 'react-router-dom';
 import {
-  BarChart,
-  Bar,
   XAxis,
   YAxis,
   CartesianGrid,
@@ -22,11 +20,7 @@ import {
   Clock,
   Star,
   TrendingUp,
-  AlertCircle,
-  Calendar,
   ArrowRight,
-  User,
-  Building2,
 } from 'lucide-react';
 import { officerStats, mockComplaints } from '@/data/mockData';
 import { format } from 'date-fns';

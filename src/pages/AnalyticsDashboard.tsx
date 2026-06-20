@@ -173,7 +173,7 @@ export function AnalyticsDashboard() {
                   outerRadius={100}
                   paddingAngle={4}
                   dataKey="count"
-                  label={({ category, count }) => `${category}: ${count}`}
+                  label={(props: any) => `${props.category}: ${props.count}`}
                 >
                   {mockAnalytics.complaintsByCategory.map((_, index) => (
                     <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />

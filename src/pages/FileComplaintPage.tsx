@@ -5,9 +5,7 @@ import {
   Upload,
   MapPin,
   Phone,
-  Calendar,
   Building2,
-  AlertCircle,
   Sparkles,
   Clock,
   CheckCircle,
@@ -16,7 +14,7 @@ import {
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
-import { complaintCategories, departments } from '@/data/mockData';
+import { complaintCategories } from '@/data/mockData';
 import { cn } from '@/lib/utils';
 
 interface AIAnalysis {
@@ -61,7 +59,7 @@ export function FileComplaintPage() {
         ? 'medium'
         : 'low',
       department: getDepartmentFromCategory(formData.category || 'Infrastructure'),
-      estimatedResolution: getEstimatedResolution(formData.category || 'Infrastructure'),
+      estimatedResolution: getEstimatedResolution(),
       summary: formData.description.slice(0, 150) + (formData.description.length > 150 ? '...' : ''),
     };
     setAiAnalysis(analysis);
@@ -81,7 +79,7 @@ export function FileComplaintPage() {
     return mapping[category] || 'Revenue';
   };
 
-  const getEstimatedResolution = (category: string): string => {
+  const getEstimatedResolution = (): string => {
     const days = Math.floor(Math.random() * 7) + 3;
     return `${days} days`;
   };

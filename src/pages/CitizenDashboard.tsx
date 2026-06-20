@@ -3,7 +3,6 @@ import {
   FileText,
   Clock,
   CheckCircle,
-  AlertCircle,
   Bell,
   ArrowRight,
   Search,

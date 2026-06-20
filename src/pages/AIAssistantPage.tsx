@@ -2,7 +2,6 @@ import { useState, useRef, useEffect } from 'react';
 import {
   Bot,
   Send,
-  Sparkles,
   FileText,
   Landmark,
   Search,

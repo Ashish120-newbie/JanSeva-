@@ -8,10 +8,8 @@ import {
   Clock,
   Building2,
   MapPin,
-  Phone,
   Calendar,
   User,
-  ArrowRight,
   MessageSquare,
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
