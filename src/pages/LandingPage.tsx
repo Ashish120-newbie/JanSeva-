@@ -429,7 +429,7 @@ export function LandingPage() {
       </section>
 
       {/* ===== SERVICES ===== */}
-      <section id="services" className="py-20 bg-slate-50/50">
+      <section id="services" className="py-20 bg-slate-50/50 scroll-mt-20">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center max-w-3xl mx-auto mb-14">
             <h2 className="text-3xl sm:text-4xl font-bold text-slate-900 mb-4">One Platform, Every Service</h2>
@@ -459,7 +459,7 @@ export function LandingPage() {
       </section>
 
       {/* ===== AI ASSISTANT ===== */}
-      <section id="assistant" className="py-20 bg-white">
+      <section id="assistant" className="py-20 bg-white scroll-mt-20">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid lg:grid-cols-2 gap-12 items-center">
             <div>
@@ -1171,7 +1171,7 @@ export function LandingPage() {
       </section>
 
       {/* ===== HOW IT WORKS ===== */}
-      <section className="py-20 bg-slate-50/50">
+      <section id="how-it-works" className="py-20 bg-slate-50/50 scroll-mt-20">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center max-w-3xl mx-auto mb-16">
             <h2 className="text-3xl sm:text-4xl font-bold text-slate-900 mb-4">How It Works</h2>
@@ -1200,7 +1200,7 @@ export function LandingPage() {
       </section>
 
       {/* ===== TRUST & SECURITY ===== */}
-      <section className="py-20 bg-white">
+      <section id="about" className="py-20 bg-white scroll-mt-20">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center max-w-3xl mx-auto mb-14">
             <h2 className="text-3xl sm:text-4xl font-bold text-slate-900 mb-4">Trust & Security</h2>
@@ -1222,7 +1222,7 @@ export function LandingPage() {
       </section>
 
       {/* ===== CTA ===== */}
-      <section className="py-20 bg-gradient-to-br from-blue-600 to-sky-600">
+      <section id="contact" className="py-20 bg-gradient-to-br from-blue-600 to-sky-600 scroll-mt-20">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
           <Shield className="w-12 h-12 text-white/90 mx-auto mb-4" />
           <h2 className="text-3xl sm:text-4xl font-bold text-white mb-4">Ready to Experience Better Governance?</h2>
