@@ -23,6 +23,7 @@ import {
   PieChart as PieChartIcon,
   Activity,
   Loader2,
+  MapPin,
 } from 'lucide-react';
 import { mockAnalytics } from '@/data/mockData';
 import { supabase, type Complaint } from '@/lib/supabase';
@@ -33,16 +34,19 @@ const COLORS = ['#3b82f6', '#10b981', '#f59e0b', '#ef4444', '#8b5cf6', '#ec4899'
 
 const RESOLVED_STATUSES = ['resolved'];
 
+type LocationCount = { location: string; count: number };
+
 type LiveStats = {
   total: number;
   resolved: number;
   rate: number;
   avgDays: number;
+  byLocation: LocationCount[];
   loading: boolean;
   error: string | null;
 };
 
-const EMPTY_STATS: LiveStats = { total: 0, resolved: 0, rate: 0, avgDays: 0, loading: true, error: null };
+const EMPTY_STATS: LiveStats = { total: 0, resolved: 0, rate: 0, avgDays: 0, byLocation: [], loading: true, error: null };
 
 function computeStats(rows: Complaint[]): LiveStats {
   const total = rows.length;
@@ -61,7 +65,17 @@ function computeStats(rows: Complaint[]): LiveStats {
             resolvedRows.length) *
             10
         ) / 10;
-  return { total, resolved, rate, avgDays, loading: false, error: null };
+
+  const locationMap = new Map<string, number>();
+  for (const r of rows) {
+    const loc = (r.location ?? 'Unknown').trim() || 'Unknown';
+    locationMap.set(loc, (locationMap.get(loc) ?? 0) + 1);
+  }
+  const byLocation = Array.from(locationMap, ([location, count]) => ({ location, count }))
+    .sort((a, b) => b.count - a.count)
+    .slice(0, 8);
+
+  return { total, resolved, rate, avgDays, byLocation, loading: false, error: null };
 }
 
 export function AnalyticsDashboard() {
@@ -71,7 +85,7 @@ export function AnalyticsDashboard() {
     setStats((prev) => ({ ...prev, loading: true, error: null }));
     const { data, error } = await supabase
       .from('complaints')
-      .select('id, status, created_at, resolved_at');
+      .select('id, status, created_at, resolved_at, location');
 
     if (error) {
       setStats({ ...EMPTY_STATS, loading: false, error: error.message });
@@ -255,7 +269,7 @@ export function AnalyticsDashboard() {
                   outerRadius={100}
                   paddingAngle={4}
                   dataKey="count"
-                  label={(props: any) => `${props.category}: ${props.count}`}
+                  label={(props: { category?: string; count?: number }) => `${props.category}: ${props.count}`}
                 >
                   {mockAnalytics.complaintsByCategory.map((_, index) => (
                     <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
@@ -321,30 +335,45 @@ export function AnalyticsDashboard() {
         </div>
       </div>
 
-      {/* Heatmap Placeholder */}
+      {/* Geographic Distribution */}
       <div className="mt-6 bg-white rounded-2xl border border-slate-100 shadow-sm overflow-hidden">
         <div className="px-6 py-4 border-b border-slate-100">
-          <h2 className="font-semibold text-slate-900">Grievance Heatmap</h2>
-          <p className="text-sm text-slate-500">Geographic distribution of complaints</p>
+          <h2 className="font-semibold text-slate-900">Grievance Distribution by Location</h2>
+          <p className="text-sm text-slate-500">Top complaint hotspots from live data</p>
         </div>
         <div className="p-6">
-          <div className="aspect-video bg-gradient-to-br from-blue-50 via-green-50 to-amber-50 rounded-xl flex items-center justify-center border-2 border-dashed border-slate-200">
-            <div className="text-center">
-              <div className="grid grid-cols-10 gap-1 mb-4">
-                {[...Array(100)].map((_, i) => (
-                  <div
-                    key={i}
-                    className="w-4 h-4 rounded-sm"
-                    style={{
-                      backgroundColor: `rgba(59, 130, 246, ${Math.random() * 0.8 + 0.1})`,
-                    }}
-                  />
-                ))}
-              </div>
-              <p className="text-sm text-slate-500">This is a placeholder for an interactive map</p>
-              <p className="text-xs text-slate-400">Would integrate with mapping API for real implementation</p>
+          {stats.byLocation.length === 0 ? (
+            <div className="py-10 text-center text-sm text-slate-400">
+              {stats.loading ? 'Loading locations…' : 'No location data available yet.'}
             </div>
-          </div>
+          ) : (
+            <div className="space-y-3">
+              {stats.byLocation.map((loc) => {
+                const max = stats.byLocation[0].count || 1;
+                const intensity = Math.round((loc.count / max) * 100);
+                return (
+                  <div key={loc.location} className="flex items-center gap-3">
+                    <div className="w-40 flex-shrink-0 flex items-center gap-2 text-sm text-slate-700 truncate">
+                      <MapPin className="w-3.5 h-3.5 text-slate-400 flex-shrink-0" />
+                      <span className="truncate" title={loc.location}>{loc.location}</span>
+                    </div>
+                    <div className="flex-1 h-7 bg-slate-50 rounded-lg overflow-hidden relative">
+                      <div
+                        className="h-full rounded-lg transition-all duration-500"
+                        style={{
+                          width: `${intensity}%`,
+                          background: `linear-gradient(90deg, rgba(59,130,246,0.35), rgba(37,99,235,${0.6 + intensity / 250}))`,
+                        }}
+                      />
+                      <span className="absolute right-2 top-1/2 -translate-y-1/2 text-xs font-semibold text-slate-700">
+                        {loc.count}
+                      </span>
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+          )}
         </div>
       </div>
     </div>

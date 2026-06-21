@@ -14,6 +14,7 @@ import {
   CheckCircle,
   RefreshCw,
   Save,
+  Shield,
 } from 'lucide-react';
 import { format } from 'date-fns';
 import { Button } from '@/components/ui/button';
@@ -60,6 +61,14 @@ export function OfficerResolutionPanel() {
   const [notes, setNotes] = useState('');
   const [saving, setSaving] = useState(false);
   const [saveMessage, setSaveMessage] = useState<{ type: 'success' | 'error'; text: string } | null>(null);
+  const [officerName, setOfficerName] = useState<string>(() => {
+    return localStorage.getItem('janseva.officerName') ?? '';
+  });
+
+  const handleOfficerNameChange = (name: string) => {
+    setOfficerName(name);
+    localStorage.setItem('janseva.officerName', name);
+  };
 
   const loadComplaints = useCallback(async () => {
     setLoading(true);
@@ -110,13 +119,17 @@ export function OfficerResolutionPanel() {
 
   const handleSave = async () => {
     if (!selected) return;
+    if (!officerName.trim()) {
+      setSaveMessage({ type: 'error', text: 'Please enter your name before saving.' });
+      return;
+    }
     setSaving(true);
     setSaveMessage(null);
 
     const payload = {
       status: newStatus,
       officer_notes: notes.trim() || null,
-      officer_name: 'Rajesh Kumar',
+      officer_name: officerName.trim(),
     };
 
     const { data, error: updateError } = await supabase
@@ -253,10 +266,12 @@ export function OfficerResolutionPanel() {
           complaint={selected}
           newStatus={newStatus}
           notes={notes}
+          officerName={officerName}
           saving={saving}
           saveMessage={saveMessage}
           onStatusChange={setNewStatus}
           onNotesChange={setNotes}
+          onOfficerNameChange={handleOfficerNameChange}
           onSave={handleSave}
           onClose={() => setSelected(null)}
         />
@@ -301,20 +316,24 @@ function ComplaintDetailDrawer({
   complaint,
   newStatus,
   notes,
+  officerName,
   saving,
   saveMessage,
   onStatusChange,
   onNotesChange,
+  onOfficerNameChange,
   onSave,
   onClose,
 }: {
   complaint: Complaint;
   newStatus: ComplaintStatus;
   notes: string;
+  officerName: string;
   saving: boolean;
   saveMessage: { type: 'success' | 'error'; text: string } | null;
   onStatusChange: (status: ComplaintStatus) => void;
   onNotesChange: (notes: string) => void;
+  onOfficerNameChange: (name: string) => void;
   onSave: () => void;
   onClose: () => void;
 }) {
@@ -436,6 +455,21 @@ function ComplaintDetailDrawer({
                 <option key={s} value={s}>{STATUS_LABELS[s]}</option>
               ))}
             </select>
+          </div>
+
+          {/* Officer name */}
+          <div>
+            <label className="block text-sm font-medium text-slate-700 mb-2 flex items-center gap-1.5">
+              <Shield className="w-4 h-4 text-slate-500" />
+              Officer name
+            </label>
+            <input
+              type="text"
+              value={officerName}
+              onChange={(e) => onOfficerNameChange(e.target.value)}
+              placeholder="Enter your full name"
+              className="w-full px-4 py-3 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
+            />
           </div>
 
           {/* Notes */}

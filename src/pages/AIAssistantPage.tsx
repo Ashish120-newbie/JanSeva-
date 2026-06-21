@@ -116,7 +116,7 @@ export function AIAssistantPage() {
       };
 
       setMessages(prev => [...prev, assistantMessage]);
-    } catch (error) {
+    } catch {
       const errorMessage: Message = {
         id: crypto.randomUUID(),
         role: 'assistant',

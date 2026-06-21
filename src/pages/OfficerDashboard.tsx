@@ -1,3 +1,4 @@
+import { useState, useEffect } from 'react';
 import {
   XAxis,
   YAxis,
@@ -19,33 +20,54 @@ import {
   Clock,
   Star,
   TrendingUp,
+  Shield,
 } from 'lucide-react';
 import { officerStats } from '@/data/mockData';
 import { OfficerResolutionPanel } from '@/components/OfficerResolutionPanel';
 
+function getInitials(name: string): string {
+  const parts = name.trim().split(/\s+/).filter(Boolean);
+  if (parts.length === 0) return '—';
+  if (parts.length === 1) return parts[0].slice(0, 2).toUpperCase();
+  return (parts[0][0] + parts[1][0]).toUpperCase();
+}
+
 export function OfficerDashboard() {
+  const [officerName, setOfficerName] = useState<string>(
+    () => localStorage.getItem('janseva.officerName') ?? ''
+  );
+
+  useEffect(() => {
+    const sync = () => setOfficerName(localStorage.getItem('janseva.officerName') ?? '');
+    window.addEventListener('storage', sync);
+    return () => window.removeEventListener('storage', sync);
+  }, []);
+
+  const displayName = officerName.trim() || 'Officer';
+  const department = 'Field Operations';
+
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
       <div className="mb-8">
-        <div className="flex items-center justify-between">
+        <div className="flex items-center justify-between flex-wrap gap-4">
           <div>
             <h1 className="text-2xl font-bold text-slate-900">Officer Dashboard</h1>
             <p className="text-slate-600">Monitor your assigned complaints and performance</p>
           </div>
           <div className="flex items-center gap-3">
-            <div className="w-12 h-12 rounded-full bg-gradient-to-br from-blue-500 to-indigo-600 flex items-center justify-center text-white font-bold">
-              RK
+            <div className="w-12 h-12 rounded-full bg-gradient-to-br from-blue-500 to-sky-600 flex items-center justify-center text-white font-bold">
+              {officerName.trim() ? getInitials(officerName) : <Shield className="w-5 h-5" />}
             </div>
             <div>
-              <p className="font-medium text-slate-900">Rajesh Kumar</p>
-              <p className="text-sm text-slate-500">Electricity Department</p>
+              <p className="font-medium text-slate-900">{displayName}</p>
+              <p className="text-sm text-slate-500">{department}</p>
             </div>
           </div>
         </div>
       </div>
 
       {/* Stats Cards */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4 mb-8">
+      <div className="grid grid-cols-2 lg:grid-cols-5 gap-4 mb-8">
         <div className="bg-white rounded-2xl p-6 border border-slate-100 shadow-sm">
           <div className="flex items-center justify-between mb-4">
             <div className="w-12 h-12 rounded-xl bg-blue-100 flex items-center justify-center">

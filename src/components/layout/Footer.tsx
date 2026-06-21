@@ -10,6 +10,7 @@ import {
   MapPin,
   Github,
   Users,
+  LifeBuoy,
 } from 'lucide-react';
 
 const teamMembers = [
@@ -93,21 +94,21 @@ export function Footer() {
           {/* Contact */}
           <div>
             <h3 className="font-semibold text-white mb-4">Contact</h3>
-            <div className="space-y-2.5">
+            <div className="space-y-3">
               <a href="mailto:team@codesmiths.dev" className="flex items-center gap-2 text-slate-400 hover:text-white text-sm transition-colors">
-                <Mail className="w-4 h-4" />
+                <Mail className="w-4 h-4 flex-shrink-0" />
                 <span>team@codesmiths.dev</span>
               </a>
-              <div className="flex items-center gap-2 text-slate-400 text-sm">
-                <Mail className="w-4 h-4" />
+              <a href="mailto:support@janseva.gov.in" className="flex items-start gap-2 text-slate-400 hover:text-white text-sm transition-colors">
+                <LifeBuoy className="w-4 h-4 flex-shrink-0" />
                 <span>support@janseva.gov.in</span>
-              </div>
+              </a>
               <div className="flex items-center gap-2 text-slate-400 text-sm">
-                <Phone className="w-4 h-4" />
+                <Phone className="w-4 h-4 flex-shrink-0" />
                 <span>1800-200-0001</span>
               </div>
               <div className="flex items-center gap-2 text-slate-400 text-sm">
-                <MapPin className="w-4 h-4" />
+                <MapPin className="w-4 h-4 flex-shrink-0" />
                 <span>New Delhi, India</span>
               </div>
             </div>
